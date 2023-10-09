@@ -13,7 +13,6 @@ public class PlayerController : MonoBehaviour
 
     //create the input action 
     private InputAction move;
-    private InputAction fire;
 
 
     private Vector2 moveDirection = Vector2.zero;
@@ -31,11 +30,6 @@ public class PlayerController : MonoBehaviour
         //Enable the variable
         move.Enable();
 
-       // fire = _playerControls.Player.Fire;
-
-       // fire.Enable();
-
-       // fire.performed += Fire;
     }
 
     private void OnDisable()
@@ -43,7 +37,6 @@ public class PlayerController : MonoBehaviour
         //disable the variable
         move.Disable();
 
-        fire.Disable(); 
     }
 
     // Start is called before the first frame update
@@ -64,8 +57,6 @@ public class PlayerController : MonoBehaviour
         rb.velocity = new Vector3(moveDirection.x * _moveSpeed,0, 0);
     }
 
-    private void Fire(InputAction.CallbackContext context) 
-    {
-        Debug.Log("Fire");
-    }
+ 
+
 }
