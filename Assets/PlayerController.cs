@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
 {
     public Rigidbody rb;
     public float _moveSpeed = 5;
+    public float _jumpForce = 10;
     public  IS_Player _playerControls;
     public float slashDuration;
 
@@ -76,7 +77,7 @@ public class PlayerController : MonoBehaviour
 
     private void JumpPerformed(InputAction.CallbackContext context) 
     {
-        rb.AddForce(Vector3.up * 15f, ForceMode.Impulse);
+        rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
         _OnFloor = false;
     }
 
