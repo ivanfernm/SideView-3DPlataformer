@@ -10,14 +10,17 @@ public class PlayerController : MonoBehaviour
     public Rigidbody rb;
     public float _moveSpeed = 5;
     public  IS_Player _playerControls;
+    public float slashDuration;
 
     //create the input action 
     private InputAction move;
-    private InputAction jump;  
+    private InputAction jump;
+    private InputAction fire;
 
     private Vector2 moveDirection = Vector2.zero;
 
     public EntityCollisionBox collisionBox;
+    public GameObject slash;
 
     [SerializeField] private bool _OnFloor = true;
 
@@ -32,8 +35,11 @@ public class PlayerController : MonoBehaviour
         //initialize the input action
         move = _playerControls.Player.Move; 
         jump = _playerControls.Player.Jump;
+        fire = _playerControls.Player.Shoot;
         //Enable the variable
         move.Enable();
+        fire.Enable();
+        fire.performed += FirePerformed;
 
     }
 
@@ -41,6 +47,7 @@ public class PlayerController : MonoBehaviour
     {
         //disable the variable
         move.Disable();
+        fire.Disable();
     
     }
 
@@ -72,6 +79,19 @@ public class PlayerController : MonoBehaviour
         rb.AddForce(Vector3.up * 15f, ForceMode.Impulse);
         _OnFloor = false;
     }
+
+    private void FirePerformed(InputAction.CallbackContext context) 
+    {
+        StartCoroutine(TurnOff(slash, slashDuration));
+    }
+
+    //create a corrutine that turn on and off a gameobject based in time
+    IEnumerator TurnOff(GameObject obj, float time)
+    {
+        yield return new WaitForSeconds(time);
+        obj.SetActive(false);
+    }
+
 
  
 

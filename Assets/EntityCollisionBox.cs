@@ -4,22 +4,39 @@ using UnityEngine;
 
 public class EntityCollisionBox : MonoBehaviour
 {
+    public LayerMask avoidLayer;
     public bool inCollision = false;
     public collisionType type;
 
-    private void OnCollisionEnter(Collision collision)
+
+    private void OnTriggerEnter(Collider collision)
     {
-        inCollision = true;
         var col = collision.gameObject;
-        if (col.layer == LayerMask.NameToLayer("Floor"))
+
+        if (col.layer != LayerMask.NameToLayer("Player"))
         {
-            type = collisionType.floor;
-           
+          
+            inCollision = true;
+            if (col.layer == LayerMask.NameToLayer("Floor"))
+            {
+                type = collisionType.floor;
+
+            }
         }
-        
-      
+     
     }
 
+    private void OnTriggerExit(Collider collision)
+    {
+        var col = collision.gameObject;
+        if (col.layer != LayerMask.NameToLayer("Player"))
+        {
+             inCollision = false;
+           
+        }
+      
+
+    }
 
     public enum collisionType 
     {
