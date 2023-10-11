@@ -22,7 +22,9 @@ public class PlayerController : MonoBehaviour
     public float _jumpForce = 10;
     public JumpGizmo jumpGizmo;
     public float maxHeightLimit;
-    
+    public float maxArcHeight;
+
+
     private Vector2 moveDirection = Vector2.zero;
 
     [Space(10)]
@@ -93,6 +95,9 @@ public class PlayerController : MonoBehaviour
         }
 
         if (_OnFloor) _playerControls.Player.Jump.Enable(); else _playerControls.Player.Jump.Disable();
+
+
+        
     }
     #endregion
 
@@ -148,7 +153,12 @@ public class PlayerController : MonoBehaviour
 
         while (Time.time <= endTime)
         {
-            transform.position = Vector3.Slerp(startPos, endPos, (Time.time - startTime) / duration); 
+            float yPosition = Mathf.Clamp(transform.position.y, 0, maxArcHeight);
+            var slerp = Vector3.Slerp(startPos, endPos, (Time.time - startTime) / duration);
+            slerp.y = Mathf.Clamp(slerp.y, 0, maxArcHeight);
+            transform.position = slerp;
+            //transform.position = new Vector3(transform.position.x, yPosition, transform.position.z);
+
             yield return null;
         }
 
