@@ -17,7 +17,10 @@ public class PlayerController : MonoBehaviour
 
     [Space(10)]
     public EntityCollisionBox collisionBox;
+    public float jumpSpeed = 10;
+    public float jumpXLenght;
     public float _jumpForce = 10;
+    public JumpGizmo jumpGizmo;
     public float maxHeightLimit;
     
     private Vector2 moveDirection = Vector2.zero;
@@ -40,8 +43,6 @@ public class PlayerController : MonoBehaviour
 
     public float lineLenght = 10;
 
-
-
     #region UnityStates
     private void Awake()
     {
@@ -59,6 +60,8 @@ public class PlayerController : MonoBehaviour
     }
     void Start()
     {
+        jumpGizmo.playerController = this;
+
         _playerControls.Player.Move.performed += move =>
         {
             moveDirection = move.ReadValue<Vector2>(); 
@@ -76,6 +79,8 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         transform.position += new Vector3(moveDirection.x, 0, 0) * _moveSpeed * Time.deltaTime;
+        var jumpDistance = new Vector2(jumpXLenght, transform.position.y);
+        jumpGizmo.UpdateJumpGizmo(jumpDistance);
        
         if (_OnFloor) _playerControls.Player.Jump.Enable(); else _playerControls.Player.Jump.Disable();
     }
@@ -101,7 +106,8 @@ public class PlayerController : MonoBehaviour
     #region PerformedActions
     private void JumpPerformed(InputAction.CallbackContext context) 
     {
-
+        var jumpDesire = jumpGizmo.transform.position;
+        StartCoroutine(LerpPostitions(transform.position,jumpDesire,jumpSpeed));
         Debug.Log("Jump");
     }
 
@@ -123,5 +129,20 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(time);
         obj.SetActive(false);
     }
+  
+    IEnumerator LerpPostitions(Vector3 startPos, Vector3 endPos, float duration)
+    {
+        float startTime = Time.time;
+        float endTime = startTime + duration;
 
+        while (Time.time <= endTime)
+        {
+            transform.position = Vector3.Slerp(startPos, endPos, (Time.time - startTime) / duration); 
+            yield return null;
+        }
+
+        transform.position = endPos;
+    }
+
+   
 }
