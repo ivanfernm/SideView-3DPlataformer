@@ -302,6 +302,7 @@ GameObject:
   m_Component:
   - component: {fileID: 108405702}
   - component: {fileID: 108405703}
+  - component: {fileID: 108405704}
   m_Layer: 3
   m_Name: JumpDesired
   m_TagString: Untagged
@@ -316,13 +317,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 108405701}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 13.48, y: 0.61, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 10.556271, y: -0.34999996, z: -2.4638844}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_Father: {fileID: 2112955171}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &108405703
 MonoBehaviour:
@@ -337,7 +338,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerController: {fileID: 2112955172}
+  lastHit: {x: 0, y: 0, z: 0}
   playerOffset: {x: 0, y: 0}
+--- !u!135 &108405704
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 108405701}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &489469716
 GameObject:
   m_ObjectHideFlags: 0
@@ -645,7 +660,7 @@ Transform:
   m_Children:
   - {fileID: 921128424}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &921128423
 GameObject:
@@ -956,7 +971,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1951400399
 MonoBehaviour:
@@ -1335,6 +1350,7 @@ MonoBehaviour:
   avoidLayer:
     serializedVersion: 2
     m_Bits: 8
+  playerController: {fileID: 2112955172}
   inCollision: 0
   type: 0
 --- !u!54 &2071172531
@@ -1454,6 +1470,7 @@ Transform:
   - {fileID: 1873714067}
   - {fileID: 1574264763}
   - {fileID: 2071172526}
+  - {fileID: 108405702}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1473,7 +1490,8 @@ MonoBehaviour:
   _dashforce: 30
   collisionBox: {fileID: 2071172530}
   jumpSpeed: 1
-  _jumpForce: 100
+  jumpXLenght: 10
+  _jumpForce: 5
   jumpGizmo: {fileID: 108405703}
   maxHeightLimit: 0.1
   _OnFloor: 0

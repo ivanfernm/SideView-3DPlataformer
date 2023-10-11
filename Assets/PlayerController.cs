@@ -29,7 +29,7 @@ public class PlayerController : MonoBehaviour
     [Header("Player States")]
     [Space(10)]
 
-    [SerializeField] private bool _OnFloor = true;
+    [SerializeField] public bool _OnFloor = true;
 
 
     [Space(10)]
@@ -71,16 +71,22 @@ public class PlayerController : MonoBehaviour
     {
         moveDirection = _playerControls.Player.Move.ReadValue<Vector2>();
        
-        if (collisionBox.inCollision && collisionBox.type == EntityCollisionBox.collisionType.floor)
-        { _OnFloor = collisionBox.inCollision;}
 
     }
 
     private void FixedUpdate()
     {
         transform.position += new Vector3(moveDirection.x, 0, 0) * _moveSpeed * Time.deltaTime;
-        var jumpDistance = new Vector2(jumpXLenght, transform.position.y);
-        jumpGizmo.UpdateJumpGizmo(jumpDistance);
+        if (moveDirection.x != 0)
+        {
+             var jumpDistance = new Vector2(jumpXLenght * moveDirection.x, transform.position.y);
+             jumpGizmo.UpdateJumpGizmo(jumpDistance,false);
+        }
+        else
+        {
+            var jumpDistance = new Vector2(0,_jumpForce);
+            jumpGizmo.UpdateJumpGizmo(jumpDistance,true);
+        }
        
         if (_OnFloor) _playerControls.Player.Jump.Enable(); else _playerControls.Player.Jump.Disable();
     }
@@ -143,6 +149,9 @@ public class PlayerController : MonoBehaviour
 
         transform.position = endPos;
     }
+
+
+
 
    
 }

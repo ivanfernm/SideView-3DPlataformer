@@ -6,6 +6,8 @@ public class JumpGizmo : MonoBehaviour
 {
     public PlayerController playerController;
 
+    [SerializeField] private Vector3 lastHit = Vector3.zero;
+
     public Vector2 playerOffset;
 
     private void OnDrawGizmos()
@@ -22,28 +24,53 @@ public class JumpGizmo : MonoBehaviour
         }
     }
     
-    public void UpdateJumpGizmo(Vector2 offset)
+    public void UpdateJumpGizmo(Vector2 offset,bool upJump)
     {
-        playerOffset = new Vector2(offset.x,calculateRaycast().y);
+        if (!upJump) { playerOffset = new Vector2(offset.x, calculateRaycastDown().y); }
+        else 
+        {
+            var a = calculateRaycastUP();
+
+            if(offset.y >= a.y) { playerOffset = new Vector2(offset.x, a.y); }
+  
+            else { playerOffset = offset;}
+        }
+   
         transform.position = playerController.transform.position + (Vector3)playerOffset;
 
     }
 
-    Vector3 calculateRaycast() 
+    Vector3 calculateRaycastDown() 
     {
         // Raycast example:
         RaycastHit hit;
         if (Physics.Raycast(transform.position, Vector3.down, out hit, Mathf.Infinity, LayerMask.GetMask("Floor")))
         {
            // Debug.Log("Hit floor at point: " + hit.point);
-            
+            lastHit = hit.point;
             return hit.point;
         }
         else
         {
-           // Debug.Log("No hit");
-            return Vector3.zero;
+            // Debug.Log("No hit");
+            return lastHit;
         }   
     }
     
+    Vector3 calculateRaycastUP()
+    {
+        // Raycast example:
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.up, out hit, Mathf.Infinity, LayerMask.GetMask("Floor")))
+        {
+            // Debug.Log("Hit floor at point: " + hit.point);
+            lastHit = hit.point;
+            return hit.point;
+        }
+        else
+        {
+            // Debug.Log("No hit");
+            return lastHit;
+        }   
+    }
 }
