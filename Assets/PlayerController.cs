@@ -1,67 +1,73 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 
-[RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
 {
-    public Rigidbody rb;
-    public float _moveSpeed = 5;
-    public float _jumpForce = 10;
+    [Header("--------Player Settings--------")]
+    [Space(10)]
+    [Header("Player Movement")]
     public  IS_Player _playerControls;
-    public float slashDuration;
+    
+    public float _moveSpeed = 5;
+    public float _dashforce;
 
-    //create the input action 
-    private InputAction move;
-    private InputAction jump;
-    private InputAction fire;
-
+    [Space(10)]
+    public EntityCollisionBox collisionBox;
+    public float _jumpForce = 10;
+    public float maxHeightLimit;
+    
     private Vector2 moveDirection = Vector2.zero;
 
-    public EntityCollisionBox collisionBox;
-    public GameObject slash;
+    [Space(10)]
+    [Header("Player States")]
+    [Space(10)]
 
     [SerializeField] private bool _OnFloor = true;
 
+
+    [Space(10)]
+    [Header("Player Slash")]
+    [Space(10)]
+    public GameObject slash;
+
+    public float slashDuration;
+    //create the input action 
+
+
+    public float lineLenght = 10;
+
+
+
+    #region UnityStates
     private void Awake()
     {
-        _playerControls = new IS_Player();
-        _playerControls.Enable(); 
-    }   
 
-    private void OnEnable()
-    {
-        //initialize the input action
-        move = _playerControls.Player.Move; 
-        jump = _playerControls.Player.Jump;
-        fire = _playerControls.Player.Shoot;
-        //Enable the variable
-        move.Enable();
-        fire.Enable();
-        fire.performed += FirePerformed;
+        //instantiate the warpper(the c# script from the input system) class
+        _playerControls = new IS_Player(); 
 
+        _playerControls.Player.Jump.performed += JumpPerformed; 
+
+        _playerControls.Player.Shoot.performed += FirePerformed;    
+
+        _playerControls.Player.Dash.performed += DashPerformed;
+   
+        
     }
-
-    private void OnDisable()
-    {
-        //disable the variable
-        move.Disable();
-        fire.Disable();
-    
-    }
-
-    // Start is called before the first frame update
     void Start()
     {
-        jump.performed += JumpPerformed;
+        _playerControls.Player.Move.performed += move =>
+        {
+            moveDirection = move.ReadValue<Vector2>(); 
+        };
     }
-
-    // Update is called once per frame
     void Update()
     {
-        moveDirection = move.ReadValue<Vector2>();
+        moveDirection = _playerControls.Player.Move.ReadValue<Vector2>();
+       
         if (collisionBox.inCollision && collisionBox.type == EntityCollisionBox.collisionType.floor)
         { _OnFloor = collisionBox.inCollision;}
 
@@ -69,31 +75,53 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.velocity = new Vector3(moveDirection.x * _moveSpeed,0, 0);
+        transform.position += new Vector3(moveDirection.x, 0, 0) * _moveSpeed * Time.deltaTime;
+       
+        if (_OnFloor) _playerControls.Player.Jump.Enable(); else _playerControls.Player.Jump.Disable();
+    }
+    #endregion
 
-        if (_OnFloor)
-            jump.Enable(); else jump.Disable();
+    #region InputAction
+    private void OnEnable()
+    {
+
+        _playerControls.Enable();
+
     }
 
+    private void OnDisable()
+    {
+
+        _playerControls.Disable();
+    
+    }
+
+    #endregion
+
+    #region PerformedActions
     private void JumpPerformed(InputAction.CallbackContext context) 
     {
-        rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
-        _OnFloor = false;
+
+        Debug.Log("Jump");
     }
 
     private void FirePerformed(InputAction.CallbackContext context) 
     {
         StartCoroutine(TurnOff(slash, slashDuration));
+        Debug.Log("Fire");
     }
-
-    //create a corrutine that turn on and off a gameobject based in time
+    private void DashPerformed(InputAction.CallbackContext context) 
+    {
+        Debug.Log("Dash");
+        transform.position += new Vector3(moveDirection.x * (_dashforce * Time.deltaTime) * 10, 0, 0);
+    }
+    #endregion
+    
     IEnumerator TurnOff(GameObject obj, float time)
     {
+        obj.SetActive(true);
         yield return new WaitForSeconds(time);
         obj.SetActive(false);
     }
-
-
- 
 
 }
