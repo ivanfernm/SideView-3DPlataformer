@@ -36,12 +36,13 @@ public class PlayerController : MonoBehaviour
     [Header("Player Slash")]
     [Space(10)]
     public GameObject slash;
-
     public float slashDuration;
-    //create the input action 
 
 
-    public float lineLenght = 10;
+    [Space(10)]
+    public Animator _myAnimator;
+
+    
 
     #region UnityStates
     private void Awake()
@@ -71,7 +72,6 @@ public class PlayerController : MonoBehaviour
     {
         moveDirection = _playerControls.Player.Move.ReadValue<Vector2>();
        
-
     }
 
     private void FixedUpdate()
@@ -81,13 +81,17 @@ public class PlayerController : MonoBehaviour
         {
              var jumpDistance = new Vector2(jumpXLenght * moveDirection.x, transform.position.y);
              jumpGizmo.UpdateJumpGizmo(jumpDistance,false);
+            _myAnimator.SetBool("OnSite", false);
+            _myAnimator.SetBool("Run",true);
         }
         else
         {
             var jumpDistance = new Vector2(0,_jumpForce);
             jumpGizmo.UpdateJumpGizmo(jumpDistance,true);
+            _myAnimator.SetBool("OnSite", true);
+            _myAnimator.SetBool("Run", false);
         }
-       
+
         if (_OnFloor) _playerControls.Player.Jump.Enable(); else _playerControls.Player.Jump.Disable();
     }
     #endregion
@@ -112,6 +116,7 @@ public class PlayerController : MonoBehaviour
     #region PerformedActions
     private void JumpPerformed(InputAction.CallbackContext context) 
     {
+        _myAnimator.SetBool("Jump", true);
         var jumpDesire = jumpGizmo.transform.position;
         StartCoroutine(LerpPostitions(transform.position,jumpDesire,jumpSpeed));
         Debug.Log("Jump");
@@ -135,9 +140,9 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(time);
         obj.SetActive(false);
     }
-  
+
     IEnumerator LerpPostitions(Vector3 startPos, Vector3 endPos, float duration)
-    {
+    { 
         float startTime = Time.time;
         float endTime = startTime + duration;
 
@@ -148,6 +153,7 @@ public class PlayerController : MonoBehaviour
         }
 
         transform.position = endPos;
+        _myAnimator.SetBool("Jump", false);
     }
 
 
